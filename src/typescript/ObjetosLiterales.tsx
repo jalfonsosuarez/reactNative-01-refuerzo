@@ -23,13 +23,13 @@ export const ObjetosLiterales = () => {
     }
 
     return (
-        <div>
+        <>
             <h3>Objetos literales</h3>
             <code>
                 <pre>
                     { JSON.stringify( persona, null, 2 ) }
                 </pre>
             </code>
-        </div>
+        </>
     )
 }

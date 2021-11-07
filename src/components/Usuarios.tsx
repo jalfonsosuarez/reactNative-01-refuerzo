@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { reqResApi } from "../ api/reqREs"
 import { ReqRespList, User } from '../interfaces/reqREs.interface';
 
@@ -7,13 +7,25 @@ export const Usuarios = () => {
 
     const [usuarios, setUsuarios] = useState<User[]>([]);
 
+    const pageRef = useRef(1);
+
     useEffect(() => {
-        reqResApi.get<ReqRespList>( '/users' )
-                .then( ( resp ) => {
-                    setUsuarios( resp.data.data );
-                })
-                .catch( console.log );
+        loadUsers();
     }, []);
+    
+    const loadUsers = async () => {        
+        const resp = await reqResApi.get<ReqRespList>( '/users', {
+            params: {
+                page: pageRef.current
+            }
+        } );
+        if ( resp.data.data.length > 0 ) {
+            setUsuarios( resp.data.data );
+            pageRef.current ++;
+        } else {
+            alert( 'Sin registros' );
+        }
+    }
 
     const renderItem = ( { id, first_name, last_name, email, avatar }: User ) => {
         return(
@@ -51,6 +63,13 @@ export const Usuarios = () => {
                     }
                 </tbody>
             </table>
+
+            <button 
+                className="btn btn-primary"
+                onClick = { loadUsers }
+            >
+                Siguientes
+            </button>
         </>
     )
 }
